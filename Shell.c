@@ -1,7 +1,8 @@
-// Shell sources
+// Sources taken by Chue
 
 // https://indradhanush.github.io/blog/writing-a-unix-shell-part-2/
 // https://github.com/Chuezhang2278/CSC332-OperatingSys/blob/master/task4_Chue_Zhang/Part1.c
+// https://www.geeksforgeeks.org/making-linux-shell-c/
 
 #include<stdio.h> 
 #include<string.h> 
@@ -14,21 +15,21 @@
 
 #define clear() printf("\033[H\033[J") 
 
-void cdout()
+void cdout() // Is cd.. 
 {
 	char path[100];
 	chdir("..");
-	printf("%s\n", getcwd(path,100));
+	printf("%s\n", getcwd(path,100)); // print path
 }
 
-void cdin(char *arg)
+void cdin(char *arg) // Takes string arg to go to next dir , i.e OS folder... you do cd OS to go in
 {
 	char path[100];
 	chdir(arg);
-	printf("%s\n", getcwd(path,100));
+	printf("%s\n", getcwd(path,100)); // print path
 }
 
-void input(){
+void input(){ // How we take inputs in our shell, for more explanation go to ChueZhang OS332 Repo, task 5 part 1
 	char n[100];
 	do
 	{	
@@ -48,7 +49,7 @@ void input(){
 					  
 			arg[++i] = strtok(NULL, " "); 
 		}
-		if(strcmp(arg[0], "cd") == 0)
+		if(strcmp(arg[0], "cd") == 0) // Special case just for CD, unsure if any bugs since haven't tested fully
 		{
 			if(arg[1] != NULL)
 				cdin(arg[1]);
@@ -70,13 +71,11 @@ void input(){
 
 int main() 
 { 
-    //init_shell(); 
-	int n = 0;
 	do
 	{
 		input();
 	}
-	while(n = 0);
+	while(1);
 	
 } 
 
