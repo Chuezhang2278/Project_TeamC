@@ -9,7 +9,7 @@ CSC332 project where the goal is to create a shell with working commands along w
   - List*
 - ZhiCong Wen [ Section S ]
   - Tree*
-- Garland Qui [ Section T ]
+- Garland Qiu [ Section T ]
   - Path*
 - Eric Mai [ Section T ]
   - Exit*
