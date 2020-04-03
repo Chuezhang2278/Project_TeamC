@@ -45,8 +45,7 @@ void input(){ // How we take inputs in our shell, for more explanation go to Chu
 		arg[0] = strtok(n," "); 
 		int i = 0;		   
 		while(arg[i] != NULL)      
-		{			   
-					  
+		{			   		  
 			arg[++i] = strtok(NULL, " "); 
 		}
 		if(strcmp(arg[0], "cd") == 0) // Special case just for CD, unsure if any bugs since haven't tested fully
@@ -56,19 +55,15 @@ void input(){ // How we take inputs in our shell, for more explanation go to Chu
 			else
 				cdout();
 		}
-
 		pid1 = fork();   
 		if(pid1 == 0)
 		{	
-
 			execvp(arg[0], arg);
-
 		}
 	}
 	while(strcmp(n, "quit") !=0);      
 	wait(NULL);
 }
-
 int main() 
 { 
 	do
@@ -76,7 +71,6 @@ int main()
 		input();
 	}
 	while(1);
-	
 } 
 
 
