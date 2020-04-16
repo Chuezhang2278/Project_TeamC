@@ -28,6 +28,6 @@ int main(){
 
 
     mkdir("Dir1", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    chdir("Dir1");
+    //chdir("Dir1");
     return 0;
 }
