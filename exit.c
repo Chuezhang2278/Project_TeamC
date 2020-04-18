@@ -11,12 +11,13 @@
 #include <grp.h>
 #include <time.h>
 
+/* Method outputs the last 4 commands used in the shell */
 void printLastFourCommands() {
     printf("Last 4 commands used...");
     
 }
 
-/* Using the same method for "ls -l" as done in the list.c file */
+/* Using the same method for "ls -l" as done by Jia Ming Ma in the list.c file */
 void printDetailedList() {
     printf("\nList of all content in the current directory...\n");
 
@@ -63,10 +64,11 @@ void printDetailedList() {
     free(de);
 }
 
+/* Method terminates shell after "return" key is pressed */
 void returnTerminate() {
     printf("\nHit the \"return\" key to terminate...");
     while(getchar() != '\n')
-        ; /* Empty loop */
+        ; // empty loop
     exit(0);
 }
 
