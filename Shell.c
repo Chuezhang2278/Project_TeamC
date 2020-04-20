@@ -24,12 +24,6 @@ void tree()
 {
     char *filename = "Dir0";
     int status = mkdir(filename, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    if(!status){
-        printf("Error\n");
-    }
-    else{
-        printf("Directory created successful!\n");
-    }
 
     chdir(filename);
     int t1 = open("t1.txt", O_RDWR | O_CREAT , S_IRWXU | S_IRWXG | S_IRWXO );
@@ -98,15 +92,23 @@ void printLastFourCommands() {
     printf("Last 4 commands used...\n");
     
 }
-/* Method terminates shell after "return" key is pressed */
-void returnTerminate() {
+
+void returnTerminate() 
+{
     printf("\nHit the \"return\" key to terminate...");
     while(getchar() != '\n')
         ; // empty loop
     exit(0);
 }
 
+
 ////==== Part done by Eric Mai ====////
+
+void init_shell()
+{
+	printf("Initializing Team C's Terminal\n");
+	printf("Initialized, please use commands list, exit, tree\n");
+}
 
 void cdout()
 {
@@ -124,8 +126,9 @@ void cdin(char *arg)
 
 void input(){
 	char n[100];
-	while(getchar() != '\n')
-	{	
+	char N;
+	do{
+
 		char* arg[100];		
 		char path[100];    	
 		int pid1;
@@ -142,6 +145,10 @@ void input(){
 					  
 			arg[++i] = strtok(NULL, " "); 
 		}
+		if(arg[0] == NULL){
+			exit(0);
+		}
+
 		if(strcmp(arg[0], "cd") == 0)
 		{
 			if(arg[1] != NULL)
@@ -157,10 +164,18 @@ void input(){
 		
 		if(strcmp(arg[0], "list") == 0)
 		{
+			clear();
 			list();
+			int ret;
+			//printf("Renaming t1.txt to tree.txt");
+			ret = rename("t1.txt", "tree.txt");
 		}
-		
 
+		if(strcmp(arg[0], "exit") == 0)
+		{
+			
+			returnTerminate();
+		}
 		pid1 = fork();   
 		if(pid1 == 0)
 		{	
@@ -169,6 +184,7 @@ void input(){
 
 		}
 	} 
+	while(1);
 	printLastFourCommands();   
 	list(); 
 	wait(NULL);
@@ -176,13 +192,12 @@ void input(){
 
 int main() 
 { 
-    //init_shell(); 
-	int n = 0;
+    init_shell(); 
 	do
 	{
 		input();
 	}
-	while(n = 0);
+	while(1);
 	
 } 
 
