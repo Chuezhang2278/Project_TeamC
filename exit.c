@@ -17,7 +17,7 @@
 
 /* Method outputs the last 4 commands used in the shell */
 void printLastFourCommands(char *str) {   
-    printf("The last 4 commands used were:\n");
+    printf("The last 4 commands used were...\n");
 
     size_t cnt  = 0; // To store count of '\n'
     char *target_pos   = NULL; // To store the output position in str 
@@ -57,6 +57,8 @@ void printLastFourCommands(char *str) {
 
 /* Using the same method for "ls -l" as done by Jia Ming Ma in the list.c file */
 void printDetailedList() {
+    printf("List of all content in the current directory...\n");
+
     struct dirent *de;  // Pointer for reading
     DIR *dr = opendir("."); // Pointer of directory
   
@@ -115,6 +117,7 @@ int main() {
 
     char command[100];
     char history[8192];
+    /* For some reason fgets causes the loop to skip ahead by 1 */
     while(numCommands > 0) {
         fgets(command, 100, stdin); 
         strcat(history, command);
