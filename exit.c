@@ -1,6 +1,9 @@
 // CSc 332 - Group Project: exit
 // By Eric Mai (Section T)
 
+/* Resources used:
+   https://www.geeksforgeeks.org/print-last-10-lines-of-a-given-file/ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -10,17 +13,50 @@
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>
+#include <string.h> 
 
 /* Method outputs the last 4 commands used in the shell */
-void printLastFourCommands() {
-    printf("Last 4 commands used...");
-    
-}
+void printLastFourCommands(char *str) {   
+    printf("The last 4 commands used were:\n");
+
+    size_t cnt  = 0; // To store count of '\n'
+    char *target_pos   = NULL; // To store the output position in str 
+  
+    /* Step 1: Find the last occurrence of '\n' */
+    target_pos = strrchr(str, '\n'); 
+  
+    /* Error if '\n' is not present at all */
+    if (target_pos == NULL) 
+    { 
+        fprintf(stderr, "ERROR: string doesn't contain '\\n' character\n"); 
+        return; 
+    } 
+  
+    /* Step 2: Find the target position from where we need to print the string */
+    while (cnt < 5) 
+    { 
+        // Step 2.a: Find the next instance of '\n' 
+        while (str < target_pos && *target_pos != '\n') 
+            --target_pos; 
+         /* Step 2.b: skip '\n' and increment count of '\n' */
+        if (*target_pos ==  '\n') 
+            --target_pos, ++cnt; 
+        /* str < target_pos means str has less than 5 '\n' characters, 
+           so break from loop */
+        else
+            break; 
+    } 
+  
+    /* In while loop, target_pos is decremented 2 times, that's why target_pos + 2 */
+    if (str < target_pos) 
+        target_pos += 2; 
+  
+    // Step 3: Print the string from target_pos 
+    printf("%s\n", target_pos); 
+} 
 
 /* Using the same method for "ls -l" as done by Jia Ming Ma in the list.c file */
 void printDetailedList() {
-    printf("\nList of all content in the current directory...\n");
-
     struct dirent *de;  // Pointer for reading
     DIR *dr = opendir("."); // Pointer of directory
   
@@ -73,7 +109,20 @@ void returnTerminate() {
 }
 
 int main() {
-    printLastFourCommands();
+    int numCommands = 0;
+    printf("Enter number of commands: ");
+    scanf("%d", &numCommands);
+
+    char command[100];
+    char history[8192];
+    while(numCommands > 0) {
+        fgets(command, 100, stdin); 
+        strcat(history, command);
+        numCommands--;
+    }
+
+    printf("------------------------\n");
+    printLastFourCommands(history);
     printDetailedList();
     returnTerminate();
 
