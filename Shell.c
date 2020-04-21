@@ -223,6 +223,7 @@ void input(){
 		}
 	} 
 	while(1);
+	wait(NULL);
 }
 
 int main() 
