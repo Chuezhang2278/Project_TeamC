@@ -88,10 +88,45 @@ void list()
 
 ////==== Part done by Eric Mai ====////
 
-void printLastFourCommands() {
-    printf("Last 4 commands used...\n");
-    
-}
+/* Method outputs the last 4 commands used in the shell */
+void printLastFourCommands(char *str) {   
+    printf("The last 4 commands used were...\n");
+
+    size_t cnt  = 0; // To store count of '\n'
+    char *target_pos   = NULL; // To store the output position in str 
+  
+    /* Step 1: Find the last occurrence of '\n' */
+    target_pos = strrchr(str, '\n'); 
+  
+    /* Error if '\n' is not present at all */
+    if (target_pos == NULL) 
+    { 
+        fprintf(stderr, "ERROR: string doesn't contain '\\n' character\n"); 
+        return; 
+    } 
+  
+    /* Step 2: Find the target position from where we need to print the string */
+    while (cnt < 5) 
+    { 
+        // Step 2.a: Find the next instance of '\n' 
+        while (str < target_pos && *target_pos != '\n') 
+            --target_pos; 
+         /* Step 2.b: skip '\n' and increment count of '\n' */
+        if (*target_pos ==  '\n') 
+            --target_pos, ++cnt; 
+        /* str < target_pos means str has less than 5 '\n' characters, 
+           so break from loop */
+        else
+            break; 
+    } 
+  
+    /* In while loop, target_pos is decremented 2 times, that's why target_pos + 2 */
+    if (str < target_pos) 
+        target_pos += 2; 
+  
+    // Step 3: Print the string from target_pos 
+    printf("%s\n", target_pos); 
+} 
 
 void returnTerminate() 
 {
@@ -100,7 +135,6 @@ void returnTerminate()
         ; // empty loop
     exit(0);
 }
-
 
 ////==== Part done by Eric Mai ====////
 
@@ -124,6 +158,8 @@ void cdin(char *arg)
 	printf("%s\n", getcwd(path,100));
 }
 
+char history[8192];
+
 void input(){
 	char n[100];
 	char N;
@@ -134,6 +170,7 @@ void input(){
 		int pid1;
 		//printf("~☞ "); 		   
 		fgets(n, 100, stdin);
+		strcat(history, n);
 		char *s = strchr(n, '\n');
 		if(s){			   
 			*s = '\0';
@@ -173,7 +210,8 @@ void input(){
 
 		if(strcmp(arg[0], "exit") == 0)
 		{
-			
+			printLastFourCommands(history);
+			list();
 			returnTerminate();
 		}
 		pid1 = fork();   
@@ -185,9 +223,6 @@ void input(){
 		}
 	} 
 	while(1);
-	printLastFourCommands();   
-	list(); 
-	wait(NULL);
 }
 
 int main() 
