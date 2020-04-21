@@ -1,8 +1,3 @@
-// Shell sources
-
-// https://indradhanush.github.io/blog/writing-a-unix-shell-part-2/
-// https://github.com/Chuezhang2278/CSC332-OperatingSys/blob/master/task4_Chue_Zhang/Part1.c
-
 #include<stdio.h> 
 #include<string.h> 
 #include<stdlib.h> 
@@ -138,6 +133,11 @@ void returnTerminate()
 
 ////==== Part done by Eric Mai ====////
 
+/////===== Part to be done by Garland Qiu =====/////
+
+/////===== Part to be done by Garland Qiu =====/////
+
+//////===== Part done by Chue Zhang =====///////
 void init_shell()
 {
 	printf("Initializing Team C's Terminal\n");
@@ -160,15 +160,14 @@ void cdin(char *arg)
 
 char history[8192];
 
-void input(){
+void input(){ //combining all functions into the shell file
 	char n[100];
 	char N;
-	do{
-
+	int pid1;
+	while(1){
+		printf("->"); 
 		char* arg[100];		
-		char path[100];    	
-		int pid1;
-		//printf("~☞ "); 		   
+		char path[100];    			   
 		fgets(n, 100, stdin);
 		strcat(history, n);
 		char *s = strchr(n, '\n');
@@ -182,59 +181,61 @@ void input(){
 					  
 			arg[++i] = strtok(NULL, " "); 
 		}
-		if(arg[0] == NULL){
+		if(arg[0] == NULL)
 			exit(0);
-		}
-
 		if(strcmp(arg[0], "cd") == 0)
 		{
 			if(arg[1] != NULL)
+			{
+				printf("Going to directory specificed");
 				cdin(arg[1]);
+			}
 			else
+			{
+				printf("Going to previous directory");
 				cdout();
+			}
 		}
 
 		if(strcmp(arg[0], "tree") == 0)
 		{
+			printf("Creating dir0 and contents\n");
 			tree();
-		}
-		
+		}	
 		if(strcmp(arg[0], "list") == 0)
 		{
 			clear();
 			list();
 			int ret;
-			//printf("Renaming t1.txt to tree.txt");
+			printf("Renaming t1.txt to tree.txt\n");
 			ret = rename("t1.txt", "tree.txt");
 		}
 
 		if(strcmp(arg[0], "exit") == 0)
 		{
-			printLastFourCommands(history);
 			list();
-			returnTerminate();
-		}
-		pid1 = fork();   
-		if(pid1 == 0)
-		{	
-
+			printLastFourCommands(history);
+			printf("Press the ENTER key to exit\n"); 
+			exit(0);
+		}  
+		pid1 = fork();
+		if(pid1 == -1)
+			printf("error forking");
+		else if(pid1 == 0)	
 			execvp(arg[0], arg);
-
-		}
+		else
+			wait(NULL);
+		
 	} 
-	while(1);
 	wait(NULL);
 }
 
+//////===== Part done by Chue Zhang =====//////
+
 int main() 
 { 
+    clear();
     init_shell(); 
-	do
-	{
+	while(1)
 		input();
-	}
-	while(1);
-	
 } 
-
-
