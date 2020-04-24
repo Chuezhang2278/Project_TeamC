@@ -25,9 +25,21 @@ void tree()
     int t2 = open("t2.txt", O_RDWR | O_CREAT , S_IRWXU | S_IRWXG | S_IRWXO );
     int t3 = open("t3.txt", O_RDWR | O_CREAT , S_IRWXU | S_IRWXG | S_IRWXO );
 
+    FILE *f1, *f2, *f3;
+    f1 = fopen("t1.txt","w");	
+    f2 = fopen("t2.txt","w");
+    f3 = fopen("t3.txt","w");	
+	
+    fprintf(f1, "test message to t1");
+    fprintf(f2, "test message to t2");
+    fprintf(f3, "test message to t3");
+	
+    fclose(f1);
+    fclose(f2);
+    fclose(f3);
 
     mkdir("Dir1", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    //chdir("Dir1");
+    chdir("Dir0");
 }
 
 //==== Part done by ZhiCong Wen ====//
@@ -126,116 +138,97 @@ void printLastFourCommands(char *str) {
 void returnTerminate() 
 {
     printf("\nHit the \"return\" key to terminate...");
-    while(getchar() != '\n')
-        ; // empty loop
+    while(getchar() != '\n');
     exit(0);
 }
 
 ////==== Part done by Eric Mai ====////
 
 /////===== Part to be done by Garland Qiu =====/////
-void path() {
+void path() 
+{
     char cwd[PATH_MAX];
 
     // gets current directory path
-    if(getcwd(cwd, sizeof(cwd)) != NULL) {
-        printf("Current Working Directory: %s\n", cwd);
-    }
-    else {
+    if(getcwd(cwd, sizeof(cwd)) == NULL) 
         perror("getcwd() error");
-        // return 1;
-    }
-
-    // gets t2.txt directory path
-    // check if Dir0 exists
-    if(chdir("/Dir0") != 0) {
-        perror("Directory Dir0 does not exist");
-    }
-    // try to access t2.txt
-    else {
-        int fd = access("t2.txt", F_OK);
-        if(fd == -1) {
-            printf("Error %d\n", errno);
-            perror("Error:");
-        }
-
-        else {
+    else if(getcwd(cwd, sizeof(cwd)) != NULL)
+    {
+        printf("Current Working Directory: %s\n", cwd);
+	
+    int fd = access("t2.txt", F_OK);
+	if(fd != 0){
+        	perror("error");
+	}
+	else if(fd == 0) {
             char t2_cwd[PATH_MAX];
-            if(getcwd(t2_cwd, sizeof(t2_cwd)) != NULL) {
+            if(getcwd(t2_cwd, sizeof(t2_cwd)) == NULL) 
+		perror("getcwd() error");
+            else if(getcwd(t2_cwd, sizeof(t2_cwd)) != NULL) 
+	    {
                 printf("t2.txt Working Directory: %s\n", t2_cwd);
-            }
-            else {
-                perror("getcwd() error");
-                // return 1;
-            }
 
-            // Changing name of t2.txt to path-info.txt
-            char t2_txt[] = "t2.txt";
-            char path_info_txt[] = "path-info.txt";
-            int ret = rename(t2_txt, path_info_txt);
-            if(ret == 0) {
-                printf("t2.txt renamed to path-info.txt");
-            }
-            else {
-                printf("Unable to rename file");
-            }
+        	// Changing name of t2.txt to path-info.txt
+        	char t2_txt[] = "t2.txt";
+        	char path_info_txt[] = "path-info.txt";
+        	int ret = rename(t2_txt, path_info_txt);
+        	if(ret != 0) 
+			printf("Unable to rename file\n");
+        	else if(ret == 0)
+		{
+            		printf("t2.txt renamed to path-info.txt\n");
+
+		        // concatenating contents of tree.txt and path-info.txt
+   			FILE *tree_file = fopen("tree.txt", "r");
+    			FILE *path_file = fopen("path-info.txt", "r");
+    			FILE *t3_file = fopen("t3.txt", "w");
+		
+			// check if files can read and write
+    			if(tree_file == NULL || path_file == NULL || t3_file == NULL) 
+       				 printf("Cannot open files\n");
+			else
+			{
+		            	 // copy contents of tree.txt to t3.txt
+				 char c;
+		           	 while((c = fgetc(tree_file)) != EOF) 
+			   	 	fputc(c, t3_file);
+				 while((c = fgetc(path_file)) != EOF) 
+        				fputc(c, t3_file);
+			    	 fclose(tree_file);
+			         fclose(path_file);
+			         fclose(t3_file);
+
+				 char t3_txt[] = "t3.txt";
+				 char log_txt[] = "log.txt";
+
+				 printf("Merging tree.txt and path-info.txt to t3.txt...\n");
+				 int ret = rename(t3_txt, log_txt);
+	
+				 // rename t3.txt to log.txt
+				 if(ret != 0) 
+					printf("Unable to rename file\n");
+				 else if(ret == 0)
+				 {
+				 	printf("t3.txt renamed to log.txt\n");
+					// delete tree and path text files
+					if(remove("tree.txt") != 0)
+						printf("unable to delete tree.txt\n");
+					else if(remove("tree.txt") == 0)
+					{
+						printf("tree.txt deleted successfully\n");
+						if(remove("path-info.txt") != 0) 
+							printf("unable to delete path-info.txt\n");
+						else 
+							printf("path-info.txt deleted successfully\n");	
+					}
+				 }
+    				
+			}
+	        }
+	    }
+
         }
     }
-
-    // concatenating contents of tree.txt and path-info.txt
-    FILE *tree_file = fopen("tree.txt", "r");
-    FILE *path_file = fopen("path-info.txt", "r");
-    FILE *t3_file = fopen("t3.txt", "w");
-
-    // check if files can read and write
-    if(tree_file == NULL || path_file == NULL || t3_file == NULL) {
-        printf("Cannot open files");
-        exit(0);
-    }
-
-    char c;
-    // copy contents of tree.txt to t3.txt
-    while((c = fgetc(tree_file)) != EOF) {
-        fputc(c, t3_file);
-    }
-
-    // copy contents of path-info.txt to t3.txt
-    while((c = fgetc(path_file)) != EOF) {
-        fputc(c, t3_file);
-    }
-
-    fclose(tree_file);
-    fclose(path_file);
-    fclose(t3_file);
-    printf("Merged tree.txt and path-info.txt to t3.txt");
-
-    // rename t3.txt to log.txt
-    char t3_txt[] = "t3.txt";
-    char log_txt[] = "log.txt";
-    int ret = rename(t3_txt, log_txt);
-    if(ret == 0) {
-        printf("t3.txt renamed to log.txt");
-    }
-    else {
-        printf("Unable to rename file");
-    }
-
-    // delete tree and path text files
-    if(remove("tree.txt") == 0) {
-        printf("tree.txt deleted successfully");
-    }
-    else {
-        printf("unable to delete tree.txt");
-    }
-
-    if(remove("path-info.txt") == 0) {
-        printf("path-info.txt deleted successfully");
-    }
-    else {
-        printf("unable to delete path-info.txt");
-    }
-
-    return 0;
 }
 /////===== Part to be done by Garland Qiu =====/////
 
@@ -248,16 +241,16 @@ void init_shell()
 
 void cdout()
 {
-	char path[100];
+	char paths[100];
 	chdir("..");
-	printf("%s\n", getcwd(path,100));
+	printf("%s\n", getcwd(paths,100));
 }
 
 void cdin(char *arg)
 {
-	char path[100];
+	char paths[100];
 	chdir(arg);
-	printf("%s\n", getcwd(path,100));
+	printf("%s\n", getcwd(paths,100));
 }
 
 char history[8192];
@@ -269,7 +262,7 @@ void input(){ //combining all functions into the shell file
 	while(1){
 		printf("->"); 
 		char* arg[100];		
-		char path[100];    			   
+		char paths[100];    			   
 		fgets(n, 100, stdin);
 		strcat(history, n);
 		char *s = strchr(n, '\n');
@@ -312,7 +305,11 @@ void input(){ //combining all functions into the shell file
 			printf("Renaming t1.txt to tree.txt\n");
 			ret = rename("t1.txt", "tree.txt");
 		}
-
+		if(strcmp(arg[0], "path") == 0)
+		{
+			printf("running path\n");
+			path();
+		}
 		if(strcmp(arg[0], "exit") == 0)
 		{
 			list();
@@ -320,6 +317,7 @@ void input(){ //combining all functions into the shell file
 			printf("Press the ENTER key to exit\n"); 
 			exit(0);
 		}  
+
 		pid1 = fork();
 		if(pid1 == -1)
 			printf("error forking");
