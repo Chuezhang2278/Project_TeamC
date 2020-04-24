@@ -11,6 +11,7 @@
 #include<grp.h>
 #include<dirent.h>
 #include<pwd.h>
+#include<errno.h>
 
 #define clear() printf("\033[H\033[J") 
 
@@ -158,6 +159,7 @@ void path()
 	
     int fd = access("t2.txt", F_OK);
 	if(fd != 0){
+		printf("Error %d\n", errno);
         	perror("error");
 	}
 	else if(fd == 0) {
@@ -259,10 +261,12 @@ void input(){ //combining all functions into the shell file
 	char n[100];
 	char N;
 	int pid1;
+	pid1 = fork();
 	while(1){
-		printf("->"); 
+		wait(NULL);
 		char* arg[100];		
-		char paths[100];    			   
+		char paths[100];    
+		printf("->");			   
 		fgets(n, 100, stdin);
 		strcat(history, n);
 		char *s = strchr(n, '\n');
@@ -270,7 +274,7 @@ void input(){ //combining all functions into the shell file
 			*s = '\0';
 		}	   
 		arg[0] = strtok(n," "); 
-		int i = 0;		   
+		int i = 0;	 	   
 		while(arg[i] != NULL)      
 		{			   
 					  
@@ -318,16 +322,11 @@ void input(){ //combining all functions into the shell file
 			exit(0);
 		}  
 
-		pid1 = fork();
 		if(pid1 == -1)
 			printf("error forking");
 		else if(pid1 == 0)	
 			execvp(arg[0], arg);
-		else
-			wait(NULL);
-		
 	} 
-	wait(NULL);
 }
 
 //////===== Part done by Chue Zhang =====//////
